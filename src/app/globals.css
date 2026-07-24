@@ -1,0 +1,256 @@
+@import 'tailwindcss';
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-celebration: var(--font-celebration);
+  --font-accent: var(--font-accent);
+  --font-dashboard: var(--font-dashboard);
+}
+
+/* ---------------------------------------------------------------- */
+/* Surface treatments — depth for the celebration canvas.           */
+/* ---------------------------------------------------------------- */
+
+/* Display type filled with a theme gradient instead of a flat colour. */
+.gradient-text {
+  background-size: 220% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+
+/*
+ * Fine film grain over the gradient stack. Large flat gradients band badly
+ * on 8-bit displays; a few percent of noise dissolves the steps entirely.
+ */
+.grain::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.05;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  overflow-x: hidden;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-dashboard), system-ui, sans-serif;
+}
+
+/* ---------------------------------------------------------------- */
+/* Celebration page keyframes — shared across velli/* components.   */
+/* All raw CSS / WAAPI, no animation library, per build-note #1.    */
+/* ---------------------------------------------------------------- */
+
+@keyframes heartbeat {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  14% {
+    transform: scale(1.055);
+  }
+  28% {
+    transform: scale(1);
+  }
+  42% {
+    transform: scale(1.03);
+  }
+  70% {
+    transform: scale(1);
+  }
+}
+
+/* Ambient bloom cast behind the orb — breathes slower than the heartbeat. */
+@keyframes glow-pulse {
+  0%,
+  100% {
+    opacity: 0.5;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.9;
+    transform: scale(1.09);
+  }
+}
+
+/* Slow drift across gradient-filled display type. */
+@keyframes shimmer {
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+@keyframes ring-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.4;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 1;
+  }
+}
+
+/* First-child halo: a third, wider, slower-drifting ring. */
+@keyframes halo-drift {
+  0%,
+  100% {
+    transform: scale(1) rotate(0deg);
+    opacity: 0.25;
+  }
+  50% {
+    transform: scale(1.09) rotate(2deg);
+    opacity: 0.5;
+  }
+}
+
+/* First-child ignition intro: orb fades up from dark before its heartbeat starts. */
+@keyframes ignition {
+  0% {
+    transform: scale(0.7);
+    opacity: 0;
+    filter: brightness(0.4);
+  }
+  70% {
+    filter: brightness(1.1);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+    filter: brightness(1);
+  }
+}
+
+@keyframes rise {
+  0% {
+    transform: translateY(0) translateX(0) scale(0);
+    opacity: 0;
+  }
+  8% {
+    opacity: 0.9;
+  }
+  92% {
+    opacity: 0.1;
+  }
+  100% {
+    transform: translateY(-520px) translateX(var(--dx)) scale(0.3);
+    opacity: 0;
+  }
+}
+
+/* Ticker marquee */
+@keyframes scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* Sibling constellation: slow orbit around the main orb. */
+@keyframes orbit {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Reveal sequence: inhale (held breath) then white flash. */
+@keyframes reveal-inhale {
+  0% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(0.97);
+  }
+}
+
+@keyframes reveal-flash {
+  0% {
+    opacity: 0;
+  }
+  40% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+/* Confetti drift: slow-falling theme-coloured motes with horizontal sway. */
+@keyframes confetti-fall {
+  0% {
+    transform: translateY(-10%) translateX(0) rotate(0deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.85;
+  }
+  90% {
+    opacity: 0.15;
+  }
+  100% {
+    transform: translateY(420px) translateX(var(--sway)) rotate(180deg);
+    opacity: 0;
+  }
+}
+
+/* Name typewriter: each letter fades + rises in. */
+@keyframes letter-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
