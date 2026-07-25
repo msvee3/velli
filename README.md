@@ -1,93 +1,87 @@
 # velli
 
+<<<<<<< README.md
+A celebration page for pregnancy announcements and birth reveals — built with
+Next.js 16 (App Router), Azure Cosmos DB, Azure Blob Storage, Resend, and
+Google sign-in via NextAuth (Auth.js v5).
 
+See [NOVA_BUILD_PROMPT.md](NOVA_BUILD_PROMPT.md) for the full product spec.
 
-## Getting started
+## Setup
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+### 1. Install dependencies
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
-
-## Add your files
-
-* [Create](https://docs.gitlab.com/user/project/repository/web_editor/#create-a-file) or [upload](https://docs.gitlab.com/user/project/repository/web_editor/#upload-a-file) files
-* [Add files using the command line](https://docs.gitlab.com/topics/git/add_files/#add-files-to-a-git-repository) or push an existing Git repository with the following command:
-
-```
-cd existing_repo
-git remote add origin https://gitlab.com/oodhwe/velli.git
-git branch -M main
-git push -uf origin main
+```bash
+npm install
 ```
 
-## Integrate with your tools
+### 2. Configure environment variables
 
-* [Set up project integrations](https://gitlab.com/oodhwe/velli/-/settings/integrations)
+Copy the template and fill in real values:
 
-## Collaborate with your team
+```bash
+cp .env.local.example .env.local
+```
 
-* [Invite team members and collaborators](https://docs.gitlab.com/user/project/members/)
-* [Create a new merge request](https://docs.gitlab.com/user/project/merge_requests/creating_merge_requests/)
-* [Automatically close issues from merge requests](https://docs.gitlab.com/user/project/issues/managing_issues/#closing-issues-automatically)
-* [Enable merge request approvals](https://docs.gitlab.com/user/project/merge_requests/approvals/)
-* [Set auto-merge](https://docs.gitlab.com/user/project/merge_requests/auto_merge/)
+| Variable | Where to get it |
+|---|---|
+| `COSMOS_ENDPOINT`, `COSMOS_KEY` | Azure Portal → your Cosmos DB account → Keys |
+| `COSMOS_DATABASE` | Defaults to `velli` — only change if you renamed it |
+| `RESEND_API_KEY` | [resend.com](https://resend.com) → API Keys |
+| `EMAIL_FROM` | A verified sender/domain in Resend |
+| `FEEDBACK_TO_EMAIL` | Inbox that should receive footer feedback submissions |
+| `APP_URL` | `http://localhost:3000` locally; your real domain in production |
+| `AZURE_STORAGE_CONNECTION_STRING`, `AZURE_STORAGE_CONTAINER` | Azure Portal → your Storage account → Access keys |
+| `AUTH_SECRET` | Generate with `openssl rand -base64 32` |
+| `AUTH_URL` | Same as `APP_URL` |
+| `AUTH_GOOGLE_ID`, `AUTH_GOOGLE_SECRET` | [Google Cloud Console](https://console.cloud.google.com/apis/credentials) → OAuth 2.0 Client ID (web application). Add `${APP_URL}/api/auth/callback/google` as an authorized redirect URI |
+| `NOTIFY_SECRET` | Any random string — protects the internal `/api/notify` route |
 
-## Test and Deploy
+### 3. Create the Cosmos database + containers
 
-Use the built-in continuous integration in GitLab.
+The app expects these containers to already exist (partition keys matter for
+the point-read performance the app relies on):
 
-* [Get started with GitLab CI/CD](https://docs.gitlab.com/ci/quick_start/)
-* [Analyze your code for known vulnerabilities with Static Application Security Testing (SAST)](https://docs.gitlab.com/user/application_security/sast/)
-* [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/topics/autodevops/requirements/)
-* [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/user/clusters/agent/)
-* [Set up protected environments](https://docs.gitlab.com/ci/environments/protected_environments/)
+| Container | Partition key |
+|---|---|
+| `velli_users` | `/id` |
+| `velli_pages` | `/id` |
+| `velli_subscribers` | `/pageId` |
+| `velli_messages` | `/pageId` |
+| `velli_emailLog` | `/pageId` |
+| `velli_feedback` | `/id` |
 
-***
+You can create them by hand in the Azure Portal, or call the bootstrap helper
+once from a scratch script/REPL with your `.env.local` loaded:
 
-# Editing this README
+```ts
+import { ensureDatabase } from '@/lib/cosmos'
+await ensureDatabase()
+```
 
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thanks to [makeareadme.com](https://www.makeareadme.com/) for this template.
+Also add a range index on `velli_pages./ownerId` (Container → Settings → Indexing
+Policy) so the dashboard's cross-partition "my pages" query stays fast:
 
-## Suggestions for a good README
+```json
+{ "path": "/ownerId/?", "indexes": [{ "kind": "Range", "dataType": "String" }] }
+```
 
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
+### 4. Run it
 
-## Name
-Choose a self-explaining name for your project.
+```bash
+npm run dev
+```
 
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
+Visit `http://localhost:3000`, sign in with Google, and create your first page.
 
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
+## Notes for production
 
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
-
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
-
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
-
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
-
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
-
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
-
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
-
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
-
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
-
-## License
-For open source projects, say how it is licensed.
-
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+- **`AZURE_STORAGE_CONTAINER`** is created automatically on first upload with
+  public blob access — if your org's policy blocks anonymous blob access,
+  create it manually with the appropriate access level first.
+- **Azure Blob hostname** for uploaded photos must match `next.config.ts`'s
+  `images.remotePatterns` (`*.blob.core.windows.net` is already allowed).
+- **`NOTIFY_SECRET`** must be set in every environment that calls
+  `/api/pages/[id]/reveal` — without it, reveal emails silently fail to send
+  (the page still publishes; only the notification step is skipped).
+=======
