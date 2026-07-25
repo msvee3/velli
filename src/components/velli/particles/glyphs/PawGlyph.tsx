@@ -13,7 +13,7 @@ export default function PawGlyph({ size, color }: GlyphProps) {
           height: size * 0.5,
           borderRadius: '45%',
           background: color,
-          transform: 'translate(-50%,-50%)',
+          transform: 'translate(-50%, -50%)',
         }}
       />
       <div
@@ -25,7 +25,7 @@ export default function PawGlyph({ size, color }: GlyphProps) {
           height: size * 0.28,
           borderRadius: '50%',
           background: color,
-          transform: 'translate(-50%,-50%)',
+          transform: 'translate(-50%, -50%)',
         }}
       />
       <div
@@ -37,7 +37,7 @@ export default function PawGlyph({ size, color }: GlyphProps) {
           height: size * 0.28,
           borderRadius: '50%',
           background: color,
-          transform: 'translate(-50%,-50%)',
+          transform: 'translate(-50%, -50%)',
         }}
       />
       <div
@@ -49,7 +49,7 @@ export default function PawGlyph({ size, color }: GlyphProps) {
           height: size * 0.3,
           borderRadius: '50%',
           background: color,
-          transform: 'translate(-50%,-50%)',
+          transform: 'translate(-50%, -50%)',
         }}
       />
     </div>

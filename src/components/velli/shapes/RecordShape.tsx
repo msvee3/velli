@@ -1,44 +1,37 @@
 'use client'
 
 import type { HeroShapeProps } from './index'
+import MaskedShape from './MaskedShape'
+import { circleSub } from './svg'
 
-/** A vinyl record — concentric grooves, a gleaming label, and a spindle hole — the `encore` hero shape. */
+const PATH = `${circleSub(50, 50, 48)}${circleSub(50, 50, 5)}`
+
+/** A vinyl record — grooves, a lit label, and a punched spindle hole. */
 export default function RecordShape({ palette, size, dim }: HeroShapeProps) {
   return (
-    <div
-      className="relative h-full w-full overflow-hidden rounded-full"
-      style={{ filter: dim ? 'brightness(0.55) saturate(0.7)' : undefined }}
-    >
-      <div
-        className="absolute inset-0 rounded-full"
-        style={{
-          background: palette.heroGradient,
-          boxShadow: dim ? undefined : `0 0 ${size * 0.3}px ${size * 0.04}px ${palette.glow}`,
-        }}
-      />
-      {[14, 24, 34, 44].map((inset) => (
+    <MaskedShape path={PATH} palette={palette} size={size} dim={dim}>
+      {/* Grooves. Kept light-on-dark so they survive the swatch size. */}
+      {[13, 21, 29].map((inset) => (
         <div
           key={inset}
           className="absolute rounded-full border"
-          style={{ inset: `${inset}%`, borderColor: 'rgba(255,255,255,0.1)', borderWidth: 1 }}
+          style={{ inset: `${inset}%`, borderColor: `${palette.heroRim}38` }}
         />
       ))}
-      <div
-        className="absolute inset-0 rounded-full"
-        style={{
-          background:
-            'radial-gradient(circle at 32% 24%, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.1) 18%, transparent 46%)',
-        }}
-      />
+      {/* Centre label. */}
       <div
         className="absolute rounded-full"
         style={{
           inset: '36%',
-          background: `radial-gradient(circle at 35% 30%, ${palette.heroRim} 0%, ${palette.accent} 60%, ${palette.heroRim} 100%)`,
-          boxShadow: 'inset 0 1px 3px rgba(0,0,0,0.35)',
+          background: `radial-gradient(circle at 34% 28%, ${palette.heroRim} 0%, ${palette.accent} 70%)`,
+          boxShadow: `0 0 ${Math.max(2, size * 0.05)}px ${palette.accent}80`,
         }}
       />
-      <div className="absolute rounded-full" style={{ inset: '47%', background: 'rgba(5,5,8,0.75)' }} />
-    </div>
+      {/* Spindle hole, punched back out of the label. */}
+      <div
+        className="absolute rounded-full"
+        style={{ inset: '46.5%', background: 'rgba(4,4,7,0.92)' }}
+      />
+    </MaskedShape>
   )
 }

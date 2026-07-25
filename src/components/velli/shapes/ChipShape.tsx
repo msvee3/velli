@@ -1,50 +1,40 @@
 'use client'
 
 import type { HeroShapeProps } from './index'
+import MaskedShape from './MaskedShape'
+import { circleSub } from './svg'
 
-/** An IC chip with edge pins and a glowing core — the `circuit` hero shape. */
+// Body 24..76 with four pins per edge reaching out to 10/90. Pins on all four
+// sides (the old version had only top and bottom, which read as a plain
+// rounded rectangle once scaled down).
+const PIN_OFFSETS = [30, 42.5, 55, 67.5]
+const PIN_LEN = 14
+const PIN_W = 6.5
+
+const pins = PIN_OFFSETS.flatMap((o) => [
+  `M${o} ${24 - PIN_LEN}h${PIN_W}v${PIN_LEN}h${-PIN_W}Z`, // top
+  `M${o} 76h${PIN_W}v${PIN_LEN}h${-PIN_W}Z`, // bottom
+  `M${24 - PIN_LEN} ${o}h${PIN_LEN}v${PIN_W}h${-PIN_LEN}Z`, // left
+  `M76 ${o}h${PIN_LEN}v${PIN_W}h${-PIN_LEN}Z`, // right
+]).join('')
+
+const BODY = 'M30 24h40a6 6 0 0 1 6 6v40a6 6 0 0 1-6 6H30a6 6 0 0 1-6-6V30a6 6 0 0 1 6-6Z'
+// Orientation notch, the way a real IC is keyed.
+const NOTCH = circleSub(33, 33, 4)
+
 export default function ChipShape({ palette, size, dim }: HeroShapeProps) {
-  const pins = Array.from({ length: 5 })
   return (
-    <div className="relative h-full w-full" style={{ filter: dim ? 'brightness(0.55) saturate(0.7)' : undefined }}>
-      {pins.map((_, i) => (
-        <div
-          key={`t${i}`}
-          className="absolute"
-          style={{ left: `${18 + i * 16}%`, top: '-6%', width: '4%', height: '11%', background: palette.heroRim }}
-        />
-      ))}
-      {pins.map((_, i) => (
-        <div
-          key={`b${i}`}
-          className="absolute"
-          style={{ left: `${18 + i * 16}%`, bottom: '-6%', width: '4%', height: '11%', background: palette.heroRim }}
-        />
-      ))}
+    <MaskedShape path={`${BODY}${pins}${NOTCH}`} palette={palette} size={size} dim={dim}>
+      {/* Die at the centre, lit like an active core. */}
       <div
-        className="absolute rounded-2xl"
+        className="absolute rounded-[3px]"
         style={{
-          inset: '8%',
-          background: palette.heroGradient,
-          boxShadow: dim ? undefined : `0 0 ${size * 0.28}px ${size * 0.04}px ${palette.glow}`,
+          inset: '38%',
+          background: `radial-gradient(circle, #ffffff 0%, ${palette.accent} 55%, transparent 100%)`,
+          boxShadow: `0 0 ${Math.max(3, size * 0.09)}px ${palette.accent}`,
+          opacity: 0.9,
         }}
       />
-      <div
-        className="absolute rounded-2xl"
-        style={{
-          inset: '8%',
-          background:
-            'radial-gradient(circle at 32% 24%, rgba(255,255,255,0.45) 0%, rgba(255,255,255,0.1) 18%, transparent 46%)',
-        }}
-      />
-      <div
-        className="absolute rounded-md"
-        style={{
-          inset: '34%',
-          background: `radial-gradient(circle, ${palette.accent} 0%, transparent 70%)`,
-          opacity: 0.85,
-        }}
-      />
-    </div>
+    </MaskedShape>
   )
 }

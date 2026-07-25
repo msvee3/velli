@@ -6,6 +6,7 @@ import { themeFontClassName } from '@/lib/theme-fonts'
 import type { PageAnnouncement, TickerMessage } from '@/types'
 import HeroStage from './HeroStage'
 import AmbientField from './AmbientField'
+import RoyalFrame from './RoyalFrame'
 import SiblingOrbit from './SiblingOrbit'
 import { CountdownRing, CountdownDigits } from './Countdown'
 import TickerBand from './TickerBand'
@@ -26,7 +27,7 @@ export interface AnnouncementPhaseProps {
   onEditField?: (patch: Partial<PageAnnouncement>) => void
 }
 
-const ORB_SIZE = 176
+const HERO_SIZE = 196
 
 export default function AnnouncementPhase({
   pageId,
@@ -48,117 +49,168 @@ export default function AnnouncementPhase({
     >
       <AmbientField theme={theme} bonusStarSignal={bonusStarSignal} />
 
-      {/* Edge falloff — keeps the eye on the orb and hides gradient seams. */}
+      {/* Edge falloff — keeps the eye on the hero and hides gradient seams. */}
       <div
         className="pointer-events-none absolute inset-0 z-[1]"
         style={{ background: palette.vignette, transition: 'background 0.6s ease' }}
         aria-hidden="true"
       />
 
-      <div className="relative z-10 flex w-full max-w-[390px] flex-1 flex-col items-center justify-center px-6 pb-14 text-center">
-        <div className="flex items-center gap-3">
-          <span
-            className="h-px w-8"
-            style={{ background: `linear-gradient(90deg, transparent, ${palette.accent}66)` }}
-          />
-          <p className="text-[11px] uppercase tracking-[0.3em]" style={{ color: palette.text.tag }}>
-            {tag}
-          </p>
-          <span
-            className="h-px w-8"
-            style={{ background: `linear-gradient(90deg, ${palette.accent}66, transparent)` }}
-          />
-        </div>
+      <RoyalFrame theme={theme} phase="announce" />
 
-        <div className="relative mt-6" style={{ width: ORB_SIZE, height: ORB_SIZE }}>
-          <CountdownRing dueDate={announcement.dueDate} theme={theme} size={ORB_SIZE} />
-          <HeroStage theme={theme} phase="announce" birthOrder={announcement.birthOrder} size={ORB_SIZE} />
-          {announcement.birthOrder > 1 && (
-            <SiblingOrbit siblings={announcement.siblings} theme={theme} size={ORB_SIZE} />
+      {/*
+       * Three zones spread across the full height rather than one centred
+       * block — that's what closes the dead space above and below the hero.
+       * `containerType` makes the display type size off this column's own
+       * width (cqi), so it's identical in the 390px builder preview and on a
+       * real phone; the old vw-based clamp sized off the browser viewport and
+       * overflowed inside the preview pane.
+       */}
+      <div
+        className="relative z-10 flex w-full max-w-[390px] flex-1 flex-col items-center justify-between px-7 pb-16 pt-9 text-center"
+        style={{ containerType: 'inline-size' }}
+      >
+        {/* ── Crest: tagline flanked by drawn rules and gems ───────────── */}
+        <header className="flex w-full flex-col items-center">
+          <div className="flex w-full items-center justify-center gap-2.5">
+            <span
+              className="h-px flex-1 origin-right"
+              style={{
+                background: `linear-gradient(90deg, transparent, ${palette.accent}80)`,
+                animation: 'rule-extend 1.1s cubic-bezier(0.16,1,0.3,1) both',
+              }}
+            />
+            <span
+              className="shrink-0 rotate-45"
+              style={{ width: 4, height: 4, background: palette.accent, boxShadow: `0 0 6px ${palette.accent}` }}
+              aria-hidden="true"
+            />
+            <p
+              className="shrink-0 text-[9.5px] font-medium uppercase leading-none tracking-[0.42em]"
+              style={{ color: palette.text.tag }}
+            >
+              {tag}
+            </p>
+            <span
+              className="shrink-0 rotate-45"
+              style={{ width: 4, height: 4, background: palette.accent, boxShadow: `0 0 6px ${palette.accent}` }}
+              aria-hidden="true"
+            />
+            <span
+              className="h-px flex-1 origin-left"
+              style={{
+                background: `linear-gradient(90deg, ${palette.accent}80, transparent)`,
+                animation: 'rule-extend 1.1s cubic-bezier(0.16,1,0.3,1) both',
+              }}
+            />
+          </div>
+        </header>
+
+        {/* ── Hero + headline ─────────────────────────────────────────── */}
+        <main className="flex w-full flex-col items-center">
+          <div className="relative" style={{ width: HERO_SIZE, height: HERO_SIZE }}>
+            {/* Spotlight so the hero reads as lit from the frame, not pasted on. */}
+            <div
+              className="pointer-events-none absolute rounded-full"
+              style={{
+                inset: '-46%',
+                background: `radial-gradient(circle, ${palette.glow} 0%, transparent 66%)`,
+                opacity: 0.5,
+                filter: 'blur(26px)',
+              }}
+              aria-hidden="true"
+            />
+            <CountdownRing dueDate={announcement.dueDate} theme={theme} size={HERO_SIZE} />
+            <HeroStage theme={theme} phase="announce" birthOrder={announcement.birthOrder} size={HERO_SIZE} />
+            {announcement.birthOrder > 1 && (
+              <SiblingOrbit siblings={announcement.siblings} theme={theme} size={HERO_SIZE} />
+            )}
+          </div>
+
+          <div className="mt-7">
+            <CountdownDigits dueDate={announcement.dueDate} theme={theme} />
+          </div>
+
+          {editable ? (
+            <input
+              value={announcement.title}
+              onChange={(e) => onEditField!({ title: e.target.value })}
+              placeholder="Our baby is coming"
+              maxLength={100}
+              className="mt-6 w-full bg-transparent text-center text-[clamp(1.3rem,7.6cqi,2.05rem)] font-[family-name:var(--font-celebration)] font-semibold uppercase leading-[1.12] tracking-[0.02em] outline-none placeholder:opacity-35"
+              style={{ color: palette.text.title, caretColor: palette.accent }}
+            />
+          ) : (
+            <h1
+              className="gradient-text mt-6 w-full text-balance break-words text-[clamp(1.3rem,7.6cqi,2.05rem)] font-[family-name:var(--font-celebration)] font-semibold uppercase leading-[1.12] tracking-[0.02em]"
+              style={{
+                backgroundImage: palette.titleGradient,
+                animation: 'shimmer 9s ease-in-out infinite',
+              }}
+            >
+              {announcement.title || 'Our baby is coming'}
+            </h1>
           )}
-        </div>
 
-        <div className="mt-4">
-          <CountdownDigits dueDate={announcement.dueDate} theme={theme} />
-        </div>
+          {/* Ornamental rule between headline and the couple's name. */}
+          <div className="mt-4 flex items-center gap-2" aria-hidden="true">
+            <span className="h-px w-10" style={{ background: `linear-gradient(90deg, transparent, ${palette.accent}66)` }} />
+            <span
+              className="rotate-45"
+              style={{ width: 3, height: 3, background: palette.accent, opacity: 0.8 }}
+            />
+            <span className="h-px w-10" style={{ background: `linear-gradient(90deg, ${palette.accent}66, transparent)` }} />
+          </div>
 
-        {editable ? (
-          <input
-            value={announcement.title}
-            onChange={(e) => onEditField!({ title: e.target.value })}
-            placeholder="A celebration is on the way"
-            maxLength={100}
-            className="mt-5 w-full bg-transparent text-center text-[clamp(1.5rem,6.5vw,2.15rem)] font-[family-name:var(--font-celebration)] font-medium tracking-[-0.01em] outline-none placeholder:opacity-40"
-            style={{ color: palette.text.title, caretColor: palette.accent }}
-          />
-        ) : (
-          <h1
-            className="gradient-text mt-5 text-[clamp(1.5rem,6.5vw,2.15rem)] font-[family-name:var(--font-celebration)] font-medium leading-tight tracking-[-0.01em]"
-            style={{
-              backgroundImage: palette.titleGradient,
-              animation: 'shimmer 9s ease-in-out infinite',
-            }}
-          >
-            {announcement.title || 'A celebration is on the way'}
-          </h1>
-        )}
+          {editable ? (
+            <input
+              value={announcement.coupleName}
+              onChange={(e) => onEditField!({ coupleName: e.target.value })}
+              placeholder="Someone special"
+              maxLength={80}
+              className="mt-3 w-full bg-transparent text-center font-[family-name:var(--font-accent)] text-[1.05rem] tracking-[0.06em] outline-none placeholder:opacity-35"
+              style={{ color: palette.text.couple, fontStyle: themes[theme].accentFontStyle }}
+            />
+          ) : (
+            <p
+              className="mt-3 font-[family-name:var(--font-accent)] text-[1.05rem] tracking-[0.06em]"
+              style={{ color: palette.text.couple, fontStyle: themes[theme].accentFontStyle }}
+            >
+              {announcement.coupleName || 'Someone special'}
+            </p>
+          )}
 
-        {editable ? (
-          <input
-            value={announcement.coupleName}
-            onChange={(e) => onEditField!({ coupleName: e.target.value })}
-            placeholder="Someone special"
-            maxLength={80}
-            className="mt-2 w-full bg-transparent text-center text-sm outline-none placeholder:opacity-40"
-            style={{ color: palette.text.couple }}
-          />
-        ) : (
-          <p
-            className="mt-2.5 font-[family-name:var(--font-accent)] text-[1.05rem] tracking-[0.04em]"
-            style={{ color: palette.text.couple, fontStyle: themes[theme].accentFontStyle }}
-          >
-            {announcement.coupleName || 'Someone special'}
-          </p>
-        )}
-
-        {editable ? (
-          <textarea
-            value={announcement.message}
-            onChange={(e) => onEditField!({ message: e.target.value })}
-            placeholder="A note to whoever finds this page"
-            maxLength={500}
-            rows={2}
-            className="mt-4 w-full max-w-[280px] resize-none bg-transparent text-center text-sm leading-relaxed outline-none placeholder:opacity-40"
-            style={{ color: palette.text.couple }}
-          />
-        ) : (
-          announcement.message && (
-            <>
-              <span
-                className="mt-5 text-[0.6rem]"
-                style={{ color: palette.accent, opacity: 0.5 }}
-                aria-hidden="true"
-              >
-                ✦
-              </span>
+          {editable ? (
+            <textarea
+              value={announcement.message}
+              onChange={(e) => onEditField!({ message: e.target.value })}
+              placeholder="A note to whoever finds this page"
+              maxLength={500}
+              rows={2}
+              className="mt-4 w-full max-w-[290px] resize-none bg-transparent text-center text-[0.9rem] leading-[1.75] outline-none placeholder:opacity-35"
+              style={{ color: palette.text.couple }}
+            />
+          ) : (
+            announcement.message && (
               <p
-                className="mt-3 max-w-[290px] text-[0.9rem] leading-[1.75]"
+                className="mt-4 max-w-[290px] text-[0.9rem] leading-[1.75]"
                 style={{ color: palette.text.couple }}
               >
                 {announcement.message}
               </p>
-            </>
-          )
-        )}
+            )
+          )}
+        </main>
 
-        <div className="mt-8">
+        {/* ── Subscribe ───────────────────────────────────────────────── */}
+        <footer className="flex w-full flex-col items-center">
           <SubscribeForm
             pageId={pageId}
             theme={theme}
             preview={preview}
             onSubscribed={() => setBonusStarSignal((n) => n + 1)}
           />
-        </div>
+        </footer>
       </div>
 
       <TickerBand

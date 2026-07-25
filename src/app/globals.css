@@ -244,6 +244,41 @@ body {
   }
 }
 
+/* ---------------------------------------------------------------- */
+/* Royal/futurist chrome — RoyalFrame + display type treatments.    */
+/* ---------------------------------------------------------------- */
+
+/* Scanline sweeping the full height of the frame. */
+@keyframes scan-sweep {
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(430%);
+  }
+}
+
+/* Corner gems catching the light. */
+@keyframes gem-glint {
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/* Hairline rules that draw themselves outward from the centre. */
+@keyframes rule-extend {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

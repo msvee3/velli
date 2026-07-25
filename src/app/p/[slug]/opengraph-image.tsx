@@ -1,3 +1,5 @@
+import { readFile } from 'node:fs/promises'
+import { join } from 'node:path'
 import { ImageResponse } from 'next/og'
 import { getById } from '@/lib/cosmos'
 import { themes, resolveTheme } from '@/lib/themes'
@@ -5,6 +7,18 @@ import type { Page } from '@/types'
 
 export const size = { width: 1200, height: 630 }
 export const contentType = 'image/png'
+
+// Satori can't resolve next/image or a bare public/ path — a local asset has to
+// be read off disk and inlined. Cached at module scope so it's read once per
+// server instance rather than on every share-preview render.
+let markSrc: string | null = null
+async function velliMark(): Promise<string> {
+  if (!markSrc) {
+    const data = await readFile(join(process.cwd(), 'public', 'velli_mark.png'), 'base64')
+    markSrc = `data:image/png;base64,${data}`
+  }
+  return markSrc
+}
 
 // Auto-wired into the page's OG/Twitter meta tags by the file convention —
 // a themed gradient + orb glyph instead of a flat text card, so the WhatsApp
@@ -18,6 +32,7 @@ export default async function Image({ params }: { params: Promise<{ slug: string
   const title =
     isReveal && page?.reveal.babyName ? `${page.reveal.babyName} has arrived` : page?.announcement.title || 'A celebration is on the way'
   const coupleName = page?.announcement.coupleName ?? 'velli'
+  const mark = await velliMark()
 
   return new ImageResponse(
     (
@@ -64,6 +79,16 @@ export default async function Image({ params }: { params: Promise<{ slug: string
         >
           {coupleName}
         </div>
+
+        {/* Brand mark, corner-anchored so it never competes with the headline. */}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={mark}
+          alt="velli"
+          width={56}
+          height={56}
+          style={{ position: 'absolute', bottom: 40, right: 44, borderRadius: 14, opacity: 0.92 }}
+        />
       </div>
     ),
     { ...size }

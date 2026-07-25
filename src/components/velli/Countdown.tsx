@@ -23,6 +23,10 @@ function useCountdown(dueDate: string) {
   if (now === null) return null // avoids a server/client mismatch on first paint
 
   const due = new Date(dueDate).getTime()
+  // An unset/half-typed due date (the builder's initial state) parses to NaN —
+  // without this the arc and the digits both render literal "NaN".
+  if (!Number.isFinite(due)) return null
+
   const msRemaining = Math.max(0, due - now)
   const totalMinutes = Math.floor(msRemaining / 60_000)
   const days = Math.floor(totalMinutes / (60 * 24))
@@ -77,7 +81,9 @@ export function CountdownDigits({ dueDate, theme }: { dueDate: string; theme: Th
   const state = useCountdown(dueDate)
   const palette = themes[theme].announce
 
-  if (!state) return <div className="h-7" /> // reserve layout space pre-mount
+  // Reserves the cells' height so the headline below never jumps once the
+  // clock resolves (or while the builder's due date is still unset).
+  if (!state) return <div className="h-[52px]" />
 
   if (state.arrived) {
     return (
@@ -91,16 +97,17 @@ export function CountdownDigits({ dueDate, theme }: { dueDate: string; theme: Th
   }
 
   return (
-    <div className="flex items-baseline justify-center gap-1.5">
+    <div className="flex items-stretch justify-center gap-2.5">
       <Unit value={state.days} label="days" palette={palette} />
-      <span className="text-xs" style={{ color: palette.text.countdownLabel, opacity: 0.5 }}>
-        ·
-      </span>
       <Unit value={state.hours} label="hrs" palette={palette} />
     </div>
   )
 }
 
+/**
+ * One HUD-style countdown cell — a bracketed panel rather than loose text, so
+ * the number reads as instrumentation against the framed layout.
+ */
 function Unit({
   value,
   label,
@@ -111,15 +118,22 @@ function Unit({
   palette: (typeof themes)[ThemeKey]['announce']
 }) {
   return (
-    <span className="flex items-baseline gap-1">
+    <span
+      className="flex min-w-[64px] flex-col items-center gap-1 rounded-md px-3 py-1.5 backdrop-blur-[2px]"
+      style={{
+        background: palette.btn.bg,
+        border: `1px solid ${palette.accent}2e`,
+        boxShadow: `inset 0 1px 0 ${palette.heroRim}33`,
+      }}
+    >
       <span
-        className="font-[family-name:var(--font-celebration)] text-[1.4rem] leading-none tabular-nums"
+        className="font-[family-name:var(--font-celebration)] text-[1.55rem] font-semibold leading-none tabular-nums"
         style={{ color: palette.text.countdown }}
       >
         {value}
       </span>
       <span
-        className="text-[0.6rem] uppercase tracking-[0.2em]"
+        className="text-[0.55rem] uppercase leading-none tracking-[0.24em]"
         style={{ color: palette.text.countdownLabel }}
       >
         {label}

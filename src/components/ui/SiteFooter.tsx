@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, type FormEvent } from 'react'
+import VelliLogo from '@/components/ui/VelliLogo'
 
 export default function SiteFooter() {
   const [status, setStatus] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle')
@@ -95,7 +96,8 @@ export default function SiteFooter() {
           </form>
         )}
 
-        <div className="mt-12 text-center text-xs text-neutral-400">
+        <div className="mt-12 flex flex-col items-center text-center text-xs text-neutral-400">
+          <VelliLogo size={34} className="mb-3" />
           <p>© {year} velli. All rights reserved.</p>
           <p>Designed and Developed by oodhwe.</p>
         </div>

@@ -1,4 +1,5 @@
 import { themes, type ThemeKey } from '@/lib/themes'
+import VelliLogo from '@/components/ui/VelliLogo'
 
 export default function DeactivatedScreen({ theme }: { theme: ThemeKey }) {
   const palette = themes[theme].announce
@@ -8,10 +9,8 @@ export default function DeactivatedScreen({ theme }: { theme: ThemeKey }) {
       className="flex h-[100dvh] w-full flex-col items-center justify-center px-6 text-center"
       style={{ background: palette.pageBg }}
     >
-      <p className="text-xs uppercase tracking-[0.3em]" style={{ color: palette.text.tag }}>
-        velli
-      </p>
-      <p className="mt-4 max-w-xs text-sm" style={{ color: palette.text.couple }}>
+      <VelliLogo size={44} ring={`${palette.accent}59`} />
+      <p className="mt-5 max-w-xs text-sm" style={{ color: palette.text.couple }}>
         This celebration page is no longer available.
       </p>
     </div>

@@ -6,6 +6,7 @@ import { themeFontClassName } from '@/lib/theme-fonts'
 import type { Page } from '@/types'
 import HeroStage from './HeroStage'
 import AmbientField from './AmbientField'
+import RoyalFrame from './RoyalFrame'
 import BurstField from './BurstField'
 import DriftField from './DriftField'
 import TickerBand from './TickerBand'
@@ -88,18 +89,36 @@ export default function RevealPhase({ page, skipToEnd = false }: RevealPhaseProp
       />
       {showConfetti && <DriftField theme={page.theme} />}
 
-      <div className="relative z-10 flex w-full max-w-[390px] flex-1 flex-col items-center justify-center px-6 pb-14 text-center">
-        <div className="flex items-center gap-3">
+      <RoyalFrame theme={page.theme} phase="reveal" />
+
+      <div
+        className="relative z-10 flex w-full max-w-[390px] flex-1 flex-col items-center justify-center px-7 pb-16 pt-9 text-center"
+        style={{ containerType: 'inline-size' }}
+      >
+        <div className="flex w-full items-center justify-center gap-2.5">
           <span
-            className="h-px w-8"
-            style={{ background: `linear-gradient(90deg, transparent, ${palette.accent}66)` }}
+            className="h-px flex-1"
+            style={{ background: `linear-gradient(90deg, transparent, ${palette.accent}80)` }}
           />
-          <p className="text-[11px] uppercase tracking-[0.3em]" style={{ color: palette.text.tag }}>
+          <span
+            className="shrink-0 rotate-45"
+            style={{ width: 4, height: 4, background: palette.accent, boxShadow: `0 0 6px ${palette.accent}` }}
+            aria-hidden="true"
+          />
+          <p
+            className="shrink-0 text-[9.5px] font-medium uppercase leading-none tracking-[0.42em]"
+            style={{ color: palette.text.tag }}
+          >
             {babyName ? 'Has arrived' : 'The baby has arrived'}
           </p>
           <span
-            className="h-px w-8"
-            style={{ background: `linear-gradient(90deg, ${palette.accent}66, transparent)` }}
+            className="shrink-0 rotate-45"
+            style={{ width: 4, height: 4, background: palette.accent, boxShadow: `0 0 6px ${palette.accent}` }}
+            aria-hidden="true"
+          />
+          <span
+            className="h-px flex-1"
+            style={{ background: `linear-gradient(90deg, ${palette.accent}80, transparent)` }}
           />
         </div>
 
@@ -110,7 +129,7 @@ export default function RevealPhase({ page, skipToEnd = false }: RevealPhaseProp
 
         {babyName && (
           <h1
-            className="gradient-text mt-6 text-[clamp(1.75rem,7.5vw,2.6rem)] font-[family-name:var(--font-celebration)] font-semibold leading-tight tracking-[-0.015em]"
+            className="gradient-text mt-7 w-full text-balance break-words text-[clamp(1.6rem,9.5cqi,2.6rem)] font-[family-name:var(--font-celebration)] font-semibold uppercase leading-[1.1] tracking-[0.02em]"
             style={{
               backgroundImage: palette.titleGradient,
               animation: 'shimmer 9s ease-in-out infinite',

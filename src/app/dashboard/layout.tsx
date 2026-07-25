@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { requireUser } from '@/lib/auth'
 import { signOut } from '@/auth'
 import AccountMenu from '@/components/dashboard/AccountMenu'
+import VelliLogo from '@/components/ui/VelliLogo'
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   // Defense in depth — proxy.ts already gates /dashboard/*, this covers direct
@@ -16,8 +17,8 @@ export default async function DashboardLayout({ children }: { children: React.Re
   return (
     <div className="flex min-h-[100dvh] flex-col bg-neutral-50 font-[family-name:var(--font-dashboard)] text-neutral-900">
       <header className="flex items-center justify-between border-b border-neutral-200 bg-white px-6 py-4">
-        <Link href="/dashboard" className="text-sm font-medium tracking-wide">
-          velli
+        <Link href="/dashboard" aria-label="velli — go to dashboard" className="transition hover:opacity-80">
+          <VelliLogo size={30} priority />
         </Link>
         <AccountMenu
           name={user.name}
