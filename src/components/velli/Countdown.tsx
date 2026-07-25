@@ -82,8 +82,8 @@ export function CountdownDigits({ dueDate, theme }: { dueDate: string; theme: Th
   if (state.arrived) {
     return (
       <p
-        className="font-[family-name:var(--font-accent)] text-base italic tracking-[0.06em]"
-        style={{ color: palette.text.countdown }}
+        className="font-[family-name:var(--font-accent)] text-base tracking-[0.06em]"
+        style={{ color: palette.text.countdown, fontStyle: themes[theme].accentFontStyle }}
       >
         Any day now
       </p>

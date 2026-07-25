@@ -2,11 +2,12 @@ import Link from 'next/link'
 import { notFound, redirect } from 'next/navigation'
 import { requireUser } from '@/lib/auth'
 import { getById, query } from '@/lib/cosmos'
+import { resolveTheme } from '@/lib/themes'
 import type { Page, TickerMessage } from '@/types'
 import ShareSection from '@/components/dashboard/ShareSection'
 import DeactivateToggle from '@/components/dashboard/DeactivateToggle'
 import DangerZone from '@/components/dashboard/DangerZone'
-import OrbThumb from '@/components/dashboard/OrbThumb'
+import HeroThumb from '@/components/velli/HeroThumb'
 
 export default async function ManagePage({ params }: { params: Promise<{ id: string }> }) {
   const user = await requireUser()
@@ -20,18 +21,19 @@ export default async function ManagePage({ params }: { params: Promise<{ id: str
     id,
   })
   const messageCount = (messages[0] as unknown as number) ?? 0
+  const theme = resolveTheme(page.theme)
 
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-4">
-        <OrbThumb theme={page.theme} phase={page.phase === 'reveal' ? 'reveal' : 'announce'} dormant={page.status === 'deactivated'} size={56} />
+        <HeroThumb theme={theme} phase={page.phase === 'reveal' ? 'reveal' : 'announce'} dormant={page.status === 'deactivated'} size={56} />
         <div>
           <h1 className="text-lg font-medium text-neutral-900">{page.announcement.title || 'Untitled celebration'}</h1>
           <p className="text-sm text-neutral-500">{page.announcement.coupleName}</p>
         </div>
       </div>
 
-      <ShareSection slug={page.id} coupleName={page.announcement.coupleName} theme={page.theme} />
+      <ShareSection slug={page.id} coupleName={page.announcement.coupleName} theme={theme} />
 
       <div className="rounded-2xl border border-neutral-200 bg-white p-6">
         <h2 className="text-sm font-medium text-neutral-900">Stats</h2>

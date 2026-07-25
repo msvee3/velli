@@ -3,10 +3,10 @@
 import { useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { themeKeys, type ThemeKey } from '@/lib/themes'
+import { themeKeys, themes, resolveTheme, type ThemeKey } from '@/lib/themes'
 import type { PageAnnouncement } from '@/types'
 import AnnouncementPhase from '@/components/velli/AnnouncementPhase'
-import OrbThumb from './OrbThumb'
+import HeroThumb from '@/components/velli/HeroThumb'
 
 const ORDINALS = ['1st', '2nd', '3rd', '4th+']
 
@@ -61,7 +61,7 @@ export interface PageBuilderProps {
 export default function PageBuilder({ pageId, initialTheme, initialAnnouncement }: PageBuilderProps) {
   const router = useRouter()
   const isEdit = Boolean(pageId)
-  const [theme, setTheme] = useState<ThemeKey>(initialTheme ?? 'stellar')
+  const [theme, setTheme] = useState<ThemeKey>(resolveTheme(initialTheme))
   const [announcement, setAnnouncement] = useState<PageAnnouncement>(initialAnnouncement ?? emptyAnnouncement)
   const [sheetExpanded, setSheetExpanded] = useState(true)
   const [uploading, setUploading] = useState(false)
@@ -178,20 +178,21 @@ export default function PageBuilder({ pageId, initialTheme, initialAnnouncement 
           <div className="space-y-7">
             <section>
               <p className="mb-2 text-xs font-medium uppercase tracking-wide text-neutral-400">Theme</p>
-              <div className="flex gap-3">
+              <div className="grid grid-cols-4 gap-3 sm:grid-cols-7">
                 {themeKeys.map((key) => (
                   <button
                     key={key}
                     type="button"
                     onClick={() => setTheme(key)}
                     className="flex flex-col items-center gap-1.5"
-                    aria-label={key}
+                    aria-label={themes[key].label}
                   >
-                    <OrbThumb
+                    <HeroThumb
                       theme={key}
-                      size={36}
+                      size={56}
                       className={theme === key ? 'ring-2 ring-offset-2 ring-neutral-900' : ''}
                     />
+                    <span className="text-[10px] text-neutral-500">{themes[key].label}</span>
                   </button>
                 ))}
               </div>

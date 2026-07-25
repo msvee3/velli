@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { notFound, redirect } from 'next/navigation'
 import { requireUser } from '@/lib/auth'
 import { getById, query } from '@/lib/cosmos'
+import { resolveTheme } from '@/lib/themes'
 import type { Page, TickerMessage } from '@/types'
 import MessageList from '@/components/dashboard/MessageList'
 
@@ -29,7 +30,7 @@ export default async function MessagesPage({ params }: { params: Promise<{ id: s
       <div className="mt-6">
         <MessageList
           pageId={page.id}
-          theme={page.theme}
+          theme={resolveTheme(page.theme)}
           phase={page.phase === 'reveal' ? 'reveal' : 'announce'}
           initialMessages={messages}
         />

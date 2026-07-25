@@ -2,9 +2,10 @@
 
 import { useState } from 'react'
 import { themes, ordinalTag, type ThemeKey } from '@/lib/themes'
+import { themeFontClassName } from '@/lib/theme-fonts'
 import type { PageAnnouncement, TickerMessage } from '@/types'
-import OrbPulse from './OrbPulse'
-import StarField from './StarField'
+import HeroStage from './HeroStage'
+import AmbientField from './AmbientField'
 import SiblingOrbit from './SiblingOrbit'
 import { CountdownRing, CountdownDigits } from './Countdown'
 import TickerBand from './TickerBand'
@@ -42,10 +43,10 @@ export default function AnnouncementPhase({
 
   return (
     <div
-      className="grain relative flex h-full w-full flex-col items-center overflow-hidden"
+      className={`grain relative flex h-full w-full flex-col items-center overflow-hidden ${themeFontClassName(theme)}`}
       style={{ background: palette.pageBg, transition: 'background 0.6s ease' }}
     >
-      <StarField theme={theme} bonusStarSignal={bonusStarSignal} />
+      <AmbientField theme={theme} bonusStarSignal={bonusStarSignal} />
 
       {/* Edge falloff — keeps the eye on the orb and hides gradient seams. */}
       <div
@@ -71,7 +72,7 @@ export default function AnnouncementPhase({
 
         <div className="relative mt-6" style={{ width: ORB_SIZE, height: ORB_SIZE }}>
           <CountdownRing dueDate={announcement.dueDate} theme={theme} size={ORB_SIZE} />
-          <OrbPulse theme={theme} phase="announce" birthOrder={announcement.birthOrder} size={ORB_SIZE} />
+          <HeroStage theme={theme} phase="announce" birthOrder={announcement.birthOrder} size={ORB_SIZE} />
           {announcement.birthOrder > 1 && (
             <SiblingOrbit siblings={announcement.siblings} theme={theme} size={ORB_SIZE} />
           )}
@@ -113,8 +114,8 @@ export default function AnnouncementPhase({
           />
         ) : (
           <p
-            className="mt-2.5 font-[family-name:var(--font-accent)] text-[1.05rem] italic tracking-[0.04em]"
-            style={{ color: palette.text.couple }}
+            className="mt-2.5 font-[family-name:var(--font-accent)] text-[1.05rem] tracking-[0.04em]"
+            style={{ color: palette.text.couple, fontStyle: themes[theme].accentFontStyle }}
           >
             {announcement.coupleName || 'Someone special'}
           </p>

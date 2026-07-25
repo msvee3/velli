@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { themes } from '@/lib/themes'
 import type { Page } from '@/types'
-import OrbPulse from './OrbPulse'
+import HeroStage from './HeroStage'
 import RevealPhase from './RevealPhase'
 
 type Stage = 'sealed' | 'flash' | 'revealed'
@@ -60,7 +60,7 @@ export default function RevealTrigger({ page }: { page: Page }) {
             animation: stage === 'flash' ? 'reveal-inhale 400ms ease forwards' : undefined,
           }}
         >
-          <OrbPulse theme={page.theme} birthOrder={page.announcement.birthOrder} size={160} dim />
+          <HeroStage theme={page.theme} birthOrder={page.announcement.birthOrder} size={160} dim />
           <div>
             <p className="text-sm" style={{ color: announcePalette.text.title }}>
               Something happened.

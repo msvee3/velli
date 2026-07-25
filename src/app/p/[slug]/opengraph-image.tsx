@@ -1,6 +1,6 @@
 import { ImageResponse } from 'next/og'
 import { getById } from '@/lib/cosmos'
-import { themes } from '@/lib/themes'
+import { themes, resolveTheme } from '@/lib/themes'
 import type { Page } from '@/types'
 
 export const size = { width: 1200, height: 630 }
@@ -12,7 +12,7 @@ export const contentType = 'image/png'
 export default async function Image({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
   const page = await getById<Page>('pages', slug)
-  const theme = page?.theme ?? 'stellar'
+  const theme = resolveTheme(page?.theme)
   const isReveal = page?.phase === 'reveal'
   const palette = themes[theme][isReveal ? 'reveal' : 'announce']
   const title =
@@ -37,7 +37,7 @@ export default async function Image({ params }: { params: Promise<{ slug: string
             width: 200,
             height: 200,
             borderRadius: '50%',
-            background: palette.orbGradient,
+            background: palette.heroGradient,
             display: 'flex',
           }}
         />

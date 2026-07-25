@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation'
 import { auth, signIn } from '@/auth'
-import OrbPulse from '@/components/velli/OrbPulse'
-import StarField from '@/components/velli/StarField'
+import HeroStage from '@/components/velli/HeroStage'
+import AmbientField from '@/components/velli/AmbientField'
 
 export default async function LoginPage({
   searchParams,
@@ -20,9 +20,9 @@ export default async function LoginPage({
         className="absolute inset-0 -z-10"
         style={{ background: 'radial-gradient(ellipse at 50% 18%, #2d1b5e 0%, #080614 62%)' }}
       />
-      <StarField theme="stellar" />
+      <AmbientField theme="liftoff" />
 
-      <OrbPulse theme="stellar" size={200} />
+      <HeroStage theme="liftoff" size={200} />
 
       <p
         className="mt-10 max-w-xs text-[clamp(1.1rem,4vw,1.4rem)] font-[family-name:var(--font-celebration)]"

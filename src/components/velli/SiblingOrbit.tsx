@@ -6,7 +6,7 @@ import type { Sibling } from '@/types'
 export interface SiblingOrbitProps {
   siblings: Sibling[]
   theme: ThemeKey
-  /** Should match the OrbPulse size it orbits around. */
+  /** Should match the HeroStage size it orbits around. */
   size: number
 }
 

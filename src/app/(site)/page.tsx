@@ -1,8 +1,8 @@
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { auth } from '@/auth'
-import OrbPulse from '@/components/velli/OrbPulse'
-import StarField from '@/components/velli/StarField'
+import HeroStage from '@/components/velli/HeroStage'
+import AmbientField from '@/components/velli/AmbientField'
 
 export default async function MarketingHome() {
   const session = await auth()
@@ -14,12 +14,12 @@ export default async function MarketingHome() {
         className="absolute inset-0 -z-10"
         style={{ background: 'radial-gradient(ellipse at 50% 18%, #2d1b5e 0%, #080614 62%)' }}
       />
-      <StarField theme="stellar" />
+      <AmbientField theme="liftoff" />
 
       <p className="mb-6 text-xs uppercase tracking-[0.3em]" style={{ color: 'rgba(180,140,255,0.65)' }}>
         velli
       </p>
-      <OrbPulse theme="stellar" size={180} />
+      <HeroStage theme="liftoff" size={180} />
       <h1
         className="mt-8 max-w-sm text-[clamp(1.5rem,5vw,2.25rem)] font-[family-name:var(--font-celebration)]"
         style={{ color: '#e8d8ff' }}

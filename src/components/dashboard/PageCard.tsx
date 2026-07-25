@@ -1,7 +1,7 @@
 import Link from 'next/link'
-import OrbThumb from './OrbThumb'
+import HeroThumb from '@/components/velli/HeroThumb'
 import type { Page } from '@/types'
-import { themes } from '@/lib/themes'
+import { themes, resolveTheme } from '@/lib/themes'
 
 const STATUS_LABEL: Record<Page['status'], string> = {
   active: 'Active',
@@ -17,7 +17,8 @@ const STATUS_DOT: Record<Page['status'], string> = {
 
 export default function PageCard({ page }: { page: Page }) {
   const phase = page.phase === 'reveal' ? 'reveal' : 'announce'
-  const preview = themes[page.theme].preview
+  const theme = resolveTheme(page.theme)
+  const preview = themes[theme].preview
 
   return (
     <div
@@ -27,7 +28,7 @@ export default function PageCard({ page }: { page: Page }) {
         className="flex items-center gap-3 p-5"
         style={{ background: `linear-gradient(135deg, ${preview.from}12, ${preview.to}12)` }}
       >
-        <OrbThumb theme={page.theme} phase={phase} dormant={page.status === 'deactivated'} />
+        <HeroThumb theme={theme} phase={phase} dormant={page.status === 'deactivated'} />
         <div className="min-w-0">
           <p className="truncate text-sm font-medium text-neutral-900">
             {page.announcement.title || 'Untitled celebration'}

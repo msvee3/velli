@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { themes, type ThemeKey } from '@/lib/themes'
+import { particleGlyphs } from './particles'
 
 interface Star {
   id: number
@@ -23,13 +24,13 @@ interface Spark {
   delay: number
 }
 
-export interface StarFieldProps {
+export interface AmbientFieldProps {
   theme: ThemeKey
-  /** Rising sparks are the announcement-phase motif; reveal uses ConfettiDrift instead. */
+  /** Rising particles are the announcement-phase motif; reveal uses DriftField instead. */
   sparks?: boolean
   /**
-   * Bump this number to seed one extra, brighter star — used as the felt reward
-   * when a visitor subscribes. Purely decorative, no schema involved.
+   * Bump this number to seed one extra, brighter particle — used as the felt
+   * reward when a visitor subscribes. Purely decorative, no schema involved.
    */
   bonusStarSignal?: number
   className?: string
@@ -41,8 +42,9 @@ function nextId() {
   return idCounter
 }
 
-export default function StarField({ theme, sparks = true, bonusStarSignal, className = '' }: StarFieldProps) {
-  const color = themes[theme].announce.sparkColor
+export default function AmbientField({ theme, sparks = true, bonusStarSignal, className = '' }: AmbientFieldProps) {
+  const color = themes[theme].announce.particleColor
+  const Glyph = particleGlyphs[theme]
   const [stars, setStars] = useState<Star[]>([])
   const [sparkList, setSparkList] = useState<Spark[]>([])
 
@@ -56,7 +58,7 @@ export default function StarField({ theme, sparks = true, bonusStarSignal, class
         id: nextId(),
         top: Math.random() * 70,
         left: Math.random() * 100,
-        size: 1.5 + Math.random() * 2,
+        size: 6 + Math.random() * 4,
         lo: 0.15 + Math.random() * 0.2,
         hi: 0.6 + Math.random() * 0.4,
         duration: 2 + Math.random() * 3,
@@ -77,14 +79,14 @@ export default function StarField({ theme, sparks = true, bonusStarSignal, class
     }
   }, [sparks])
 
-  // Subscribe-reward star: one new star fades in brighter, then rejoins the ambient sky.
+  // Subscribe-reward particle: one new glyph fades in brighter, then rejoins the ambient field.
   useEffect(() => {
     if (!bonusStarSignal) return
     const bonus: Star = {
       id: nextId(),
       top: 10 + Math.random() * 40,
       left: 15 + Math.random() * 70,
-      size: 3,
+      size: 11,
       lo: 0.5,
       hi: 1,
       duration: 1.4,
@@ -100,41 +102,39 @@ export default function StarField({ theme, sparks = true, bonusStarSignal, class
       {stars.map((s) => (
         <span
           key={s.id}
-          className="absolute rounded-full"
+          className="absolute"
           style={
             {
               top: `${s.top}%`,
               left: `${s.left}%`,
-              width: s.size,
-              height: s.size,
-              background: color,
               '--lo': s.lo,
               '--hi': s.hi,
               '--d': `${s.duration}s`,
               '--dl': `${s.delay}s`,
               animation: `twinkle var(--d) ease-in-out var(--dl) infinite`,
               opacity: s.bonus ? 1 : undefined,
-              boxShadow: s.bonus ? `0 0 10px 2px ${color}` : undefined,
+              filter: s.bonus ? `drop-shadow(0 0 6px ${color})` : undefined,
             } as React.CSSProperties
           }
-        />
+        >
+          <Glyph size={s.size} color={color} />
+        </span>
       ))}
       {sparkList.map((s) => (
         <span
           key={s.id}
-          className="absolute rounded-full"
+          className="absolute"
           style={
             {
               bottom: 32,
               left: `${s.left}%`,
-              width: 2,
-              height: 2,
-              background: color,
               '--dx': `${s.dx}px`,
               animation: `rise ${s.duration}s ease-out ${s.delay}s infinite`,
             } as React.CSSProperties
           }
-        />
+        >
+          <Glyph size={7} color={color} />
+        </span>
       ))}
       <style>{`
         @keyframes twinkle {

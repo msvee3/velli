@@ -58,7 +58,7 @@ export default function SubscribeForm({ pageId, theme, preview = false, onSubscr
           border: `1px solid ${palette.btn.border}`,
           color: palette.text.title,
           caretColor: palette.accent,
-          boxShadow: `inset 0 1px 0 ${palette.orbRim}, inset 0 -6px 12px rgba(0,0,0,0.18)`,
+          boxShadow: `inset 0 1px 0 ${palette.heroRim}, inset 0 -6px 12px rgba(0,0,0,0.18)`,
         }}
       />
       <button
@@ -69,7 +69,7 @@ export default function SubscribeForm({ pageId, theme, preview = false, onSubscr
           background: `linear-gradient(140deg, ${palette.btn.border}, ${palette.btn.bg})`,
           border: `1px solid ${palette.btn.border}`,
           color: palette.btn.text,
-          boxShadow: `inset 0 1px 0 ${palette.orbRim}, 0 4px 14px ${palette.glow}`,
+          boxShadow: `inset 0 1px 0 ${palette.heroRim}, 0 4px 14px ${palette.glow}`,
         }}
       >
         {status === 'sending' ? '…' : status === 'error' ? 'Retry' : 'Notify me'}

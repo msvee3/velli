@@ -2,11 +2,12 @@
 
 import { useEffect, useState } from 'react'
 import { themes } from '@/lib/themes'
+import { themeFontClassName } from '@/lib/theme-fonts'
 import type { Page } from '@/types'
-import OrbPulse from './OrbPulse'
-import StarField from './StarField'
-import PetalBurst from './PetalBurst'
-import ConfettiDrift from './ConfettiDrift'
+import HeroStage from './HeroStage'
+import AmbientField from './AmbientField'
+import BurstField from './BurstField'
+import DriftField from './DriftField'
 import TickerBand from './TickerBand'
 
 // Offsets are relative to RevealPhase's own mount, which RevealTrigger times
@@ -76,16 +77,16 @@ export default function RevealPhase({ page, skipToEnd = false }: RevealPhaseProp
 
   return (
     <div
-      className="grain relative flex h-full w-full flex-col items-center overflow-hidden"
+      className={`grain relative flex h-full w-full flex-col items-center overflow-hidden ${themeFontClassName(page.theme)}`}
       style={{ background: palette.pageBg }}
     >
-      <StarField theme={page.theme} sparks={false} />
+      <AmbientField theme={page.theme} sparks={false} />
       <div
         className="pointer-events-none absolute inset-0 z-[1]"
         style={{ background: palette.vignette }}
         aria-hidden="true"
       />
-      {showConfetti && <ConfettiDrift theme={page.theme} />}
+      {showConfetti && <DriftField theme={page.theme} />}
 
       <div className="relative z-10 flex w-full max-w-[390px] flex-1 flex-col items-center justify-center px-6 pb-14 text-center">
         <div className="flex items-center gap-3">
@@ -103,8 +104,8 @@ export default function RevealPhase({ page, skipToEnd = false }: RevealPhaseProp
         </div>
 
         <div className="relative mt-6" style={{ width: ORB_SIZE, height: ORB_SIZE }}>
-          <OrbPulse theme={page.theme} phase="reveal" birthOrder={announcement.birthOrder} size={ORB_SIZE} />
-          {showPetals && <PetalBurst theme={page.theme} count={petalCount} settled={skipToEnd} />}
+          <HeroStage theme={page.theme} phase="reveal" birthOrder={announcement.birthOrder} size={ORB_SIZE} />
+          {showPetals && <BurstField theme={page.theme} count={petalCount} settled={skipToEnd} />}
         </div>
 
         {babyName && (
@@ -147,8 +148,8 @@ export default function RevealPhase({ page, skipToEnd = false }: RevealPhaseProp
                       Father
                     </span>
                     <span
-                      className="mt-1.5 font-[family-name:var(--font-accent)] text-[0.98rem] italic tracking-[0.04em]"
-                      style={{ color: palette.text.stat }}
+                      className="mt-1.5 font-[family-name:var(--font-accent)] text-[0.98rem] tracking-[0.04em]"
+                      style={{ color: palette.text.stat, fontStyle: themes[page.theme].accentFontStyle }}
                     >
                       {fatherName}
                     </span>
@@ -159,8 +160,8 @@ export default function RevealPhase({ page, skipToEnd = false }: RevealPhaseProp
                       Mother
                     </span>
                     <span
-                      className="mt-1.5 font-[family-name:var(--font-accent)] text-[0.98rem] italic tracking-[0.04em]"
-                      style={{ color: palette.text.stat }}
+                      className="mt-1.5 font-[family-name:var(--font-accent)] text-[0.98rem] tracking-[0.04em]"
+                      style={{ color: palette.text.stat, fontStyle: themes[page.theme].accentFontStyle }}
                     >
                       {motherName}
                     </span>
@@ -174,8 +175,8 @@ export default function RevealPhase({ page, skipToEnd = false }: RevealPhaseProp
               </div>
             ) : (
               <p
-                className="mt-5 font-[family-name:var(--font-accent)] text-[0.98rem] italic tracking-[0.04em]"
-                style={{ color: palette.text.stat }}
+                className="mt-5 font-[family-name:var(--font-accent)] text-[0.98rem] tracking-[0.04em]"
+                style={{ color: palette.text.stat, fontStyle: themes[page.theme].accentFontStyle }}
               >
                 {credit}
               </p>
