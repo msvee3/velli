@@ -2,7 +2,6 @@ import { redirect } from 'next/navigation'
 import { auth, signIn } from '@/auth'
 import HeroStage from '@/components/velli/HeroStage'
 import AmbientField from '@/components/velli/AmbientField'
-import VelliLogo from '@/components/ui/VelliLogo'
 
 export default async function LoginPage({
   searchParams,
@@ -23,7 +22,6 @@ export default async function LoginPage({
       />
       <AmbientField theme="liftoff" />
 
-      <VelliLogo size={48} ring="rgba(180,160,255,0.28)" priority className="mb-9" />
       <HeroStage theme="liftoff" size={200} />
 
       <p
