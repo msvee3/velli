@@ -1,7 +1,6 @@
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { auth } from '@/auth'
-import HeroStage from '@/components/velli/HeroStage'
 import AmbientField from '@/components/velli/AmbientField'
 import VelliLogo from '@/components/ui/VelliLogo'
 
@@ -18,7 +17,6 @@ export default async function MarketingHome() {
       <AmbientField theme="liftoff" />
 
       <VelliLogo size={54} ring="rgba(180,160,255,0.28)" priority className="mb-8" />
-      <HeroStage theme="liftoff" size={180} />
       <h1
         className="mt-8 max-w-sm text-[clamp(1.5rem,5vw,2.25rem)] font-[family-name:var(--font-celebration)]"
         style={{ color: '#e8d8ff' }}
