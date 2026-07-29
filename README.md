@@ -1,5 +1,6 @@
 # velli
 
+<<<<<<< README.md
 A celebration page for pregnancy announcements and birth reveals — built with
 Next.js 16 (App Router), Azure Cosmos DB, Azure Blob Storage, Resend, and
 Google sign-in via NextAuth (Auth.js v5).
@@ -83,3 +84,4 @@ Visit `http://localhost:3000`, sign in with Google, and create your first page.
 - **`NOTIFY_SECRET`** must be set in every environment that calls
   `/api/pages/[id]/reveal` — without it, reveal emails silently fail to send
   (the page still publishes; only the notification step is skipped).
+=======
